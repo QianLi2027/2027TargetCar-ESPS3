@@ -1,0 +1,26 @@
+# 板子 = ESP32-S3-WROOM-1-N16R8(立创"ESP32主控V1.2")
+#   N16 = 16MB flash,R8 = 8MB 八线(Octal)PSRAM
+
+# ── FreeRTOS tick 必须设 1000Hz ──────────────────────────────────────────
+# 控制环用 vTaskDelayUntil(1ms),默认 100Hz 会把 1ms 量化成 10ms,
+# 控制周期变成 100Hz,PID 里写死的 dt=0.001 就是假的。
+CONFIG_FREERTOS_HZ=1000
+
+# ── Flash 16MB ──────────────────────────────────────────────────────────
+# 注意:原来的 sdkconfig 里错写成 2MB(模块实际是 16MB)
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+
+# ── 8MB 八线 PSRAM ──────────────────────────────────────────────────────
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_SPEED_80M=y
+
+# ── WebSocket 支持 ──────────────────────────────────────────────────────
+# esp_http_server 默认不带 WebSocket,必须显式打开,否则 httpd_ws_* 编译不过
+CONFIG_HTTPD_WS_SUPPORT=y
+
+# ── 栈 ──────────────────────────────────────────────────────────────────
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=4096
+
+# WebSocket + 强制门户探测需要更多 socket（默认 10 不够）
+CONFIG_LWIP_MAX_SOCKETS=16
